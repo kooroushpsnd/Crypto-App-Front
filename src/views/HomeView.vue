@@ -1,18 +1,45 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
+  <div id="all">
+    <HeaderPart :showauth="auth" />
+    <MainPart :showauth="admin"/>
+    <FooterPart />
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import HelloWorld from '@/components/HelloWorld.vue'; // @ is an alias to /src
+<script>
+import { getRole } from "../../utils/functions"
+import FooterPart from '../components/FooterPart.vue';
+import HeaderPart from '../components/HeaderPart.vue';
+import MainPart from '../components/MainPart.vue';
 
-export default defineComponent({
+
+export default {
   name: 'HomeView',
-  components: {
-    HelloWorld,
+  components: {HeaderPart ,MainPart ,FooterPart},
+  data(){
+    return{
+      auth: true,
+      admin: false
+    }
   },
-});
+  async beforeMount(){
+    const loggedIn = localStorage.getItem('token')
+    const isAdmin = localStorage.getItem('role')
+    if(loggedIn){
+      this.auth = false
+      await getRole(loggedIn)
+    }
+    if(isAdmin == 'admin'){
+      this.admin = true
+    }
+  }
+}
 </script>
+
+<style>
+#all {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+</style>
