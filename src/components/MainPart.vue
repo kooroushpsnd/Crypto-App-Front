@@ -3,7 +3,7 @@
     <div class="data" v-for="data in crypto" :key="data.name">
       <div class="image" ><img :src="getImage(data.name)" alt="crypto image"></div>
       <span id="name">{{ data.name }}</span> : <span id="price">{{ Math.floor(data.price) }} Tooman</span>
-      <button class="add" @click="removeCrypto(data.name)">-</button>
+      <button class="add" v-if="showauth" @click="removeCrypto(data.name)">-</button>
     </div>
     <form class="data" v-if="showauth" @submit.prevent>
       <input type="text" required v-model="name">
