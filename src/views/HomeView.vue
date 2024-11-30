@@ -1,45 +1,65 @@
 <template>
-  <div id="all">
-    <HeaderPart :showauth="auth" />
-    <MainPart :showauth="admin"/>
-    <FooterPart />
-  </div>
+  <v-container>
+        <v-row>
+          <v-col
+            v-for="n in crypto"
+            :key="n"
+            cols="4"
+          >
+            <v-card id="cryptoContainer" height="70">
+              <div><img :src="n.image ? `http://localhost:3000/uploads/${n.image}` : 'http://localhost:3000/uploads/CRYPTO.png'" alt="Crypto"></div>
+              <div class="mt-2">
+                <span class="details"><span class="detail">Name</span>: {{ n.name }}</span>
+                <span class="details"><span class="detail">Price</span>: {{ n.price }}</span>
+              </div>
+            </v-card>
+          </v-col>
+        </v-row>
+    </v-container>
 </template>
 
 <script>
-import { getRole } from "../../utils/functions"
-import FooterPart from '../components/FooterPart.vue';
-import HeaderPart from '../components/HeaderPart.vue';
-import MainPart from '../components/MainPart.vue';
-
+import { io } from 'socket.io-client';
 
 export default {
   name: 'HomeView',
-  components: {HeaderPart ,MainPart ,FooterPart},
   data(){
     return{
-      auth: true,
-      admin: false
+      crypto: []
     }
   },
-  async beforeMount(){
-    const loggedIn = localStorage.getItem('token')
-    const isAdmin = localStorage.getItem('role')
-    if(loggedIn){
-      this.auth = false
-      await getRole(loggedIn)
-    }
-    if(isAdmin == 'admin'){
-      this.admin = true
-    }
+  async mounted(){
+    const socket = io("http://localhost:3000")
+
+    socket.on("connect" ,() => {
+      console.log("connected")
+    })
+
+    socket.on("cryptoData" ,(data) => {
+      if(data !== "fail"){
+        this.crypto = data
+      }
+    })
   }
 }
 </script>
 
 <style>
-#all {
-  min-height: 100vh;
+img{
+  height: 50px;
+  margin-top: 7px;
+}
+#cryptoContainer{
   display: flex;
-  flex-direction: column;
+  justify-content: space-around;
+  text-align: left;
+  box-shadow: 5px 5px 10px gray;
+}
+
+.details{
+  display: block;
+}
+.detail{
+  font-weight: bold;
 }
 </style>

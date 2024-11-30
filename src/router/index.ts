@@ -2,9 +2,14 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import LoginPage from '@/views/LoginPage.vue'
 import SignUpPage from '@/views/SignUpPage.vue'
-import NotFound from '@/components/NotFound.vue'
 import UserControllPage from '@/views/UserControllPage.vue'
 import ProfileView from '@/views/ProfileView.vue'
+import AddCrypto from '@/views/AddCrypto.vue'
+import RemoveCrypto from '@/views/RemoveCrypto.vue'
+import About from '@/views/About.vue'
+import EditPorfile from '@/views/EditPorfile.vue'
+import ChangePassword from '@/views/ChangePassword.vue'
+import NotFound from '@/views/NotFound.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -23,12 +28,7 @@ const routes: Array<RouteRecordRaw> = [
     component: SignUpPage
   },
   {
-    path: '/:pathMatch(.*)*',
-    name: 'NotFound',
-    component: NotFound
-  },
-  {
-    path: '/users',
+    path: '/all-users',
     name: "getAllUsers",
     meta: { requiresAuth: true ,role: "admin"},
     component: UserControllPage
@@ -38,6 +38,41 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Profile',
     meta: { requiresAuth: true },
     component: ProfileView
+  },
+  {
+    path: '/add-crypto',
+    name: 'AddCrypto',
+    meta: { requiresAuth: true ,role: "admin"},
+    component: AddCrypto
+  },
+  {
+    path: '/remove-crypto',
+    name: 'RemoveCrypto',
+    meta: { requiresAuth: true ,role: "admin"},
+    component: RemoveCrypto
+  },
+  {
+    path: '/about',
+    name: 'About',
+    meta: { requiresAuth: true },
+    component: About
+  },
+  {
+    path: '/edit-profile',
+    name: 'EditProfile',
+    meta: { requiresAuth: true },
+    component: EditPorfile
+  },
+  {
+    path: '/change-password',
+    name: 'ChangePassword',
+    meta: { requiresAuth: true },
+    component: ChangePassword
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: NotFound
   }
 ]
 

@@ -1,64 +1,73 @@
 <template>
-    <div class="users" v-for="user in userss" :key="user.id">
-        <div class="user">
-            <div id="id"><span>id :</span> {{ user._id }}</div>
-            <div id="name"><span>Name :</span> {{ user.name }}</div>
-            <div id="email"><span>Email :</span> {{ user.email }}</div>
-            <div id="role"><span>role :</span> {{ user.role }}</div>
-        </div>
-    </div>
-    <div class="error" v-if="error.length > 0">{{ error }}</div>
+    <v-container>
+        <v-row>
+          <v-col
+            v-for="user in users"
+            :key="user.name"
+            cols="4"
+            xl="3"
+          >
+            <v-card id="userContainer" height="150">
+              <div>
+                <span class="details"><span class="detail">Id</span>: {{ user._id }}</span>
+                <span class="details"><span class="detail">Name</span>: {{ user.name }}</span>
+                <span class="details"><span class="detail">Email</span>: {{ user.email }}</span>
+                <span class="details"><span class="detail">Role</span>: {{ user.role }}</span>
+                <button id="removeUser" @click="removeUser(user._id)">Remove User</button>
+              </div>
+            </v-card>
+          </v-col>
+        </v-row>
+    </v-container>
 </template>
 
 <script>
-import axios from 'axios';
-import { getRole } from '../../utils/functions';
+import { getAllUsers ,deleteUser } from '../../utils/UserApi';
 
 export default {
     name:"UserControllPage",
     data(){
         return{
-            userss: [],
+            token: '',
+            users: [],
             error: ''
         }
     },
-    async beforeRouteEnter(){
-        await getRole(localStorage.getItem('token'))
-    },
     async mounted(){
         try {
-            const token = localStorage.getItem('token')
-            const response = await axios.get('http://localhost:3000/users' ,{
-                headers : {Authorization : `Bearer ${token}`}
-            });
-
-            if(response.status === 200) {
-                const users = response.data.data
-                this.userss = {...users.users}
-            }}
+            this.token = localStorage.getItem('token')
+            const response = await getAllUsers(this.token)
+            this.users = response.data.users
+            }
             catch(err){
                 this.error = err.message
             }
+    },
+    methods: {
+        async removeUser(id){
+            try{
+                await deleteUser(id ,this.token)
+                this.users = this.users.filter(user => user._id !== id);
+            }catch(err){
+                this.error = err.message
+            }
         }
+    }
 }
 </script>
 
 <style>
-.users{
-    display: inline-block;
-    margin: 10px;
+#userContainer{
+    display: flex;
+    text-align: left;
+    padding: 10px;
+    box-shadow: 5px 5px 10px gray;
 }
-.user{
-    background-color: #3A6FF8;
-    margin-top: 30px;
-    font-size: 25px;
-    border: 2px solid rgb(0, 0, 0);
+#removeUser{
+    background-color: red;
     border-radius: 10px;
-    padding: 20px;
-    color: aliceblue;
-}
-span {
-   font-weight: bold;
-   color: black;
+    padding: 5px;
+    margin-top: 5px;
+    font-weight: bolder;
 }
 </style>
